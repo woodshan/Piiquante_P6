@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const sauceRoutes = require("./routes/sauce");
 const userRoutes = require('./routes/user');
 
 mongoose.connect('mongodb+srv://Woodstock:michel123@cluster0.ekqabj2.mongodb.net/?retryWrites=true&w=majority',
@@ -20,6 +21,8 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+app.use("/api/sauces", sauceRoutes);
 app.use('/api/auth', userRoutes);
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;
