@@ -36,12 +36,21 @@ exports.modifySauce = (req, res, next) => {
         }`,
       }
     : { ...req.body };
-  Sauce.updateOne(
-    { _id: req.params.id },
-    { ...sauceObject, _id: req.params.id }
-  )
-    .then(() => res.status(200).json({ message: "Sauce modifiée" }))
-    .catch((error) => res.status(400).json({ error }));
+
+    Sauce.findOne({_id: req.params.id})
+      .then((sauce) => {
+        if(sauce.userId === req.auth.userId) {
+        Sauce.updateOne(
+          { _id: req.params.id },
+          { ...sauceObject, _id: req.params.id }
+        )
+          .then(() => res.status(200).json({ message: "Sauce modifiée" }))
+          .catch((error) => res.status(400).json({ error }));
+        } else {
+          res.status(403).json({message : "Unauthorized !"})
+        }
+        })
+      .catch((error) => res.status(500).json({error}));
 };
 
 exports.deleteSauce = (req, res, next) => {
