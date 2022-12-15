@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// modele de donées pour creation de sauce
 const sauceSchema = mongoose.Schema({
     userId: {type: String, required: true},
     name: {type: String, required: true},

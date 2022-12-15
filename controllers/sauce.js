@@ -1,13 +1,19 @@
+// Importation du modele de la base de donnée MongoDB
 const Sauce = require("../models/Sauce");
+// Permet d'intéragir avec systeme de fichiers y acceder
 const fs = require("fs");
 
+// CREATE
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
   delete sauceObject._userId;
+  // l'instance sauce
   const sauce = new Sauce({
+    // Ecrasé l'objet précedent
     ...sauceObject,
     userId: req.auth.userId,
+    // Construire l'url de l'image req.protocol = http
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
@@ -17,6 +23,7 @@ exports.createSauce = (req, res, next) => {
     usersDisliked: [],
   });
 
+  // Enregistrer l'objet dans la BD
   sauce
     .save()
     .then(() => {
@@ -27,7 +34,11 @@ exports.createSauce = (req, res, next) => {
     });
 };
 
+// UPDATE
+// Fonction pour modifier une sauce
 exports.modifySauce = (req, res, next) => {
+  // Objet qui va etre mises a jour dans la BD
+  // Si req.file = true => Transforme en objet js ; Mettre le chemin complet de la nouvelle image
   const sauceObject = req.file
     ? {
         ...JSON.parse(req.body.sauce),
@@ -35,11 +46,30 @@ exports.modifySauce = (req, res, next) => {
           req.file.filename
         }`,
       }
+  // Sinon je change juste l'info que l'utilisateur a changé
     : { ...req.body };
+    
+  // Si req.file = un fichier(image) est present = true
+  if(req.file) {
+    Sauce.findOne({_id: req.params.id})
+    .then((sauce) =>  {
+    // Recuperation du nom du fichier a supprimer
+      const filename = sauce.imageUrl.split("/images/")[1];
+      //Suppression de l'ancienne image dans le dossier images
+      fs.unlink(`images/${filename}`, (error) => {
+        if(error) throw error;
+      });      
+    })
+    .catch((error) => res.status.json({error}))
+  };
 
+  // Utilisation du modele mongoose appliquer méthode pour chercher l'objet grâce à son id dans la BD 
     Sauce.findOne({_id: req.params.id})
       .then((sauce) => {
+      // Verification de l'userId qui a crée la sauce et l'userId qui est connecté
         if(sauce.userId === req.auth.userId) {
+      // Méthode pour modifier l'objet grâce à son id qui seront envoyé dans la BD
+      // Mettre à jour la BD
         Sauce.updateOne(
           { _id: req.params.id },
           { ...sauceObject, _id: req.params.id }
@@ -53,13 +83,16 @@ exports.modifySauce = (req, res, next) => {
       .catch((error) => res.status(500).json({error}));
 };
 
+// DELETE
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       if (sauce.userId != req.auth.userId) {
         res.status(403).json({ message: "unauthorized request" });
       } else {
+      // Recupere le nom de l'image
         const filename = sauce.imageUrl.split("/images/")[1];
+      // Supprime l'image dans le dossier images
         fs.unlink(`images/${filename}`, () => {
           Sauce.deleteOne({ _id: req.params.id })
             .then(() => {
@@ -72,12 +105,17 @@ exports.deleteSauce = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
+// READ
+// Fonction qui affiche la sauce en question grâce à son id
 exports.getOneSauce = (req, res, next) => {
-  Sauce.findOne({ _id: req.params.id }).then((sauce) =>
-    res.status(200).json(sauce)
-  );
+  // Méthode pour chercher l'objet grâce à son id dans la BD
+  Sauce.findOne({ _id: req.params.id })
+  .then((sauce) => res.status(200).json(sauce))
+  .catch((error) => res.status(404).json({error}));
 };
 
+// READ
+// Fonction qui affiche toutes les sauces
 exports.getAllSauces = (req, res, next) => {
   Sauce.find()
     .then((sauces) => res.status(200).json(sauces))
