@@ -1,3 +1,4 @@
+// Import modules
 const http = require('http');
 const app = require('./app');
 
@@ -12,6 +13,8 @@ const normalizePort = val => {
   }
   return false;
 };
+
+// Set port
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
@@ -35,6 +38,7 @@ const errorHandler = error => {
   }
 };
 
+// Create http server
 const server = http.createServer(app);
 
 server.on('error', errorHandler);
@@ -44,4 +48,5 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
+// Run http server and listen for connections
 server.listen(port);

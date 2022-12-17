@@ -1,5 +1,4 @@
 // Password control
-
 const passwordValidator = require("password-validator");
 
 const passwordSchema = new passwordValidator()
@@ -16,6 +15,6 @@ module.exports = (req, res, next) => {
     if(passwordSchema.validate(req.body.password)){
         next();
     } else {
-        return res.status(400).json({message : `Password not strong ${passwordSchema.validate(req.body.auth, {list: true})}`})
+        return res.status(400).json({message : "The password is not strong enough."})
     }
 };

@@ -1,12 +1,13 @@
-// Packages imports
+// Express import
 const express = require('express');
+
 // Router function
 const router = express.Router();
 
-// Password middleware importation
+// Password control middleware import
 const passwordValidator = require("../middleware/password");
 
-// User controllers importation
+// User controllers import
 const userCtrl = require('../controllers/user');
 
 // Endpoint signup and login

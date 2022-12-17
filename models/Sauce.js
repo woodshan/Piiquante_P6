@@ -1,6 +1,7 @@
+// Mongoose importation
 const mongoose = require("mongoose");
 
-// modele de donées pour creation de sauce
+// Sauce model creation for DB
 const sauceSchema = mongoose.Schema({
     userId: {type: String, required: true},
     name: {type: String, required: true},

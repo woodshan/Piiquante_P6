@@ -3,7 +3,7 @@
 - Clone the frontend on https://github.com/OpenClassrooms-Student-Center/Web-Developer-P6
 - Create a "backend" folder
 - Clone this repo inside 
-- Create an image folder
+- Create an "images" folder
 - Create ".env" file and write environment variables using instructions in the ".env.example" file 
 
 

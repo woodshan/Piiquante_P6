@@ -1,13 +1,15 @@
+// Modules import
 const express = require("express");
-const router = express.Router();
-
 const auth = require("../middleware/auth");
 const multer = require("../middleware/multer-config");
 
+// Controller sauce import
 const sauceCtrl = require("../controllers/sauce");
 
-// Etapes du CRUD
-//N'a pas accès aux fonctionnalités s'il l'utilisateur ne passe pas les middlewares
+// Create express router
+const router = express.Router();
+
+// CRUD steps
 router.post("/", auth, multer, sauceCtrl.createSauce);
 router.put("/:id", auth, multer, sauceCtrl.modifySauce);
 router.delete("/:id", auth, sauceCtrl.deleteSauce);
