@@ -42,8 +42,9 @@ exports.modifySauce = (req, res, next) => {
       }
     : { ...req.body };
 
-  if (sauceObject.likes) {
+  if (sauceObject.likes || sauceObject.dislikes) {
     delete sauceObject.likes;
+    delete sauceObject.dislikes;
   }
 
   if (sauceObject.userId) {
