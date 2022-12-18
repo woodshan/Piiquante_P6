@@ -9,9 +9,10 @@ const User = require("../models/User");
 
 // Function to sign up
 exports.signup = (req, res, next) => {
+  const emailCryptoJs = cryptoJs
+    .HmacSHA256(req.body.email, `${process.env.SECRET_KEY}`)
+    .toString();
 
-    const emailCryptoJs = cryptoJs.HmacSHA256(req.body.email, `${process.env.SECRET_KEY}`).toString();
-    
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -29,29 +30,32 @@ exports.signup = (req, res, next) => {
 
 // Function to login
 exports.login = (req, res, next) => {
-    const emailCryptoJs = cryptoJs.HmacSHA256(req.body.email, `${process.env.SECRET_KEY}`).toString();
+  const emailCryptoJs = cryptoJs
+    .HmacSHA256(req.body.email, `${process.env.SECRET_KEY}`)
+    .toString();
 
-   User.findOne({ email: emailCryptoJs})
-       .then(user => {      
-           if (!user) {
-               return res.status(401).json({ error: 'Incorrect email or password' });
-           }
-           bcrypt.compare(req.body.password, user.password)
-               .then(valid => {
-                // incorrect
-                   if (!valid) {
-                       return res.status(401).json({ error: 'Incorrect email or password' });
-                   }
-                   res.status(200).json({
-                       userId: user._id,
-                       token: jwt.sign(
-                           { userId: user._id },
-                           process.env.SECRET_TOKEN,
-                           { expiresIn: '24h' }
-                       )
-                   });
-               })
-               .catch(error => res.status(500).json({ error }));
-       })
-       .catch(error => res.status(500).json({ error }));
+  User.findOne({ email: emailCryptoJs })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({ error: "Incorrect email or password" });
+      }
+      bcrypt
+        .compare(req.body.password, user.password)
+        .then((valid) => {
+          // incorrect
+          if (!valid) {
+            return res
+              .status(401)
+              .json({ error: "Incorrect email or password" });
+          }
+          res.status(200).json({
+            userId: user._id,
+            token: jwt.sign({ userId: user._id }, process.env.SECRET_TOKEN, {
+              expiresIn: "24h",
+            }),
+          });
+        })
+        .catch((error) => res.status(500).json({ error }));
+    })
+    .catch((error) => res.status(500).json({ error }));
 };

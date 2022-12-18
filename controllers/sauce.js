@@ -45,11 +45,11 @@ exports.modifySauce = (req, res, next) => {
   if (sauceObject.likes || sauceObject.dislikes) {
     delete sauceObject.likes;
     delete sauceObject.dislikes;
-  }
+  };
 
   if (sauceObject.userId) {
     delete sauceObject.userId;
-  }
+  };
 
   if (req.file) {
     Sauce.findOne({ _id: req.params.id })
@@ -119,7 +119,7 @@ exports.likeSauce = (req, res, next) => {
       if (req.body.userId === req.auth.userId) {
         switch (req.body.like) {
           case 1:
-            // Si usersliked est false et si like = 1 alors like à +1
+            // If usersliked is false and if like = 1, like +1
             if (
               !sauce.usersLiked.includes(req.body.userId) &&
               req.body.like === 1
@@ -132,9 +132,7 @@ exports.likeSauce = (req, res, next) => {
                 }
               )
 
-                .then(() =>
-                  res.status(201).json({ message: "User liked" })
-                )
+                .then(() => res.status(201).json({ message: "User liked" }))
                 .catch((error) => res.status(400).json({ error }));
             }
             break;
@@ -152,9 +150,7 @@ exports.likeSauce = (req, res, next) => {
                 }
               )
 
-                .then(() =>
-                  res.status(201).json({ message: "User dislikes" })
-                )
+                .then(() => res.status(201).json({ message: "User dislikes" }))
                 .catch((error) => res.status(400).json({ error }));
             }
             break;
@@ -184,15 +180,13 @@ exports.likeSauce = (req, res, next) => {
                 }
               )
 
-                .then(() =>
-                  res.status(201).json({ message: "User liked" })
-                )
+                .then(() => res.status(201).json({ message: "User liked" }))
                 .catch((error) => res.status(400).json({ error }));
             }
             break;
         }
       } else {
-        return res.status(403).json({message : "Unauthorized !"})
+        return res.status(403).json({ message: "Unauthorized !" });
       }
     })
     .catch((error) => res.status(404).json({ error }));

@@ -1,5 +1,5 @@
 // Express import
-const express = require('express');
+const express = require("express");
 
 // Router function
 const router = express.Router();
@@ -8,11 +8,11 @@ const router = express.Router();
 const passwordValidator = require("../middleware/password");
 
 // User controllers import
-const userCtrl = require('../controllers/user');
+const userCtrl = require("../controllers/user");
 
 // Endpoint signup and login
-router.post('/signup', passwordValidator, userCtrl.signup);
-router.post('/login', userCtrl.login);
+router.post("/signup", passwordValidator, userCtrl.signup);
+router.post("/login", userCtrl.login);
 
 // Module exportation
 module.exports = router;
